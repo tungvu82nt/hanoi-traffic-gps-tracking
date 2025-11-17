@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Xác nhận đăng ký</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#28a745",
+              "background-light": "#f8f9fa",
+              "background-dark": "#101922",
+              "text-light": "#333333",
+              "text-dark": "#f8f9fa",
+            },
+            fontFamily: {
+              "display": ["Public Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display group/design-root overflow-x-hidden" style='font-family: "Public Sans", sans-serif;'>
+<main class="flex flex-1 flex-col items-center justify-center p-4 text-center">
+<!-- Success Icon -->
+<div class="flex items-center justify-center mb-6">
+<div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/20">
+<div class="flex h-16 w-16 items-center justify-center rounded-full bg-primary">
+<span class="material-symbols-outlined text-white text-5xl">
+                        check
+                    </span>
+</div>
+</div>
+</div>
+<!-- HeadlineText -->
+<h1 class="text-text-light dark:text-text-dark tracking-light text-[32px] font-bold leading-tight px-4 pb-3 pt-6">Chúc mừng bạn đã đăng ký thành công!</h1>
+<!-- BodyText -->
+<p class="text-text-light dark:text-text-dark text-base font-normal leading-normal pb-3 pt-1 px-4 max-w-md">
+            Chúng tôi đã gửi một email xác nhận đến địa chỉ của bạn. Vui lòng kiểm tra hộp thư và nhấn vào liên kết bên trong để hoàn tất quá trình.
+        </p>
+<!-- Optional Illustration -->
+<div class="w-full max-w-xs p-4 mt-4">
+<div class="w-full bg-center bg-no-repeat bg-cover aspect-video rounded-none" data-alt="Illustration of Hanoi with traffic light signals" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA_sMqN9ojNYn6xsnDl-gBMHEUo2nZrE_Si7qIWpcs5TNJkm2rmD7rujFXcpuNvPyO2708EeesaltPL0b52YPFGcxvLcEDvbB9pZCAfAd1Mk67rHc6euK9s8zO6fQTwl_rW-4W7_73q0vyMiLHt-pjI_tCzG9jd9NOOYuTmIGfzU0NOvGq37hG_9WGH_se50G1ALU7-TG8AQdxvopAKeCdLUO4gs0QZtJgUDC8WpTZreUIET7FN0Dl2P6dx-5294StboFrZXJRhthg");'></div>
+</div>
+</main>
+<!-- SingleButton -->
+<footer class="p-4">
+<div class="flex px-4 py-3">
+<a href="/" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 flex-1 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Về trang chủ</span>
+</a>
+</div>
+</footer>
+</div>
+</body></html>
