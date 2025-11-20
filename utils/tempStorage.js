@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-// Bộ nhớ tạm thời để test khi chưa có bảng Supabase
+// Bộ nhớ tạm thời để test trong development
 let tempClicks = [];
 let clickId = 1;
 

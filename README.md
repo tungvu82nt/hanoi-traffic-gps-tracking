@@ -8,7 +8,7 @@ Hệ thống đăng ký và theo dõi người dùng cho dự án an toàn giao 
 
 ### 📝 Đăng ký người dùng
 - Form đăng ký với thông tin: Email, SĐT, Họ tên, Ngày sinh, Biển số xe, Loại xe
-- Lưu trữ dữ liệu vào Supabase
+- Lưu trữ dữ liệu vào Neon PostgreSQL
 - Giao diện responsive, hiện đại
 
 ### 📍 Tracking GPS/IP
@@ -32,7 +32,7 @@ Hệ thống đăng ký và theo dõi người dùng cho dự án an toàn giao 
 ## 🛠️ Công nghệ sử dụng
 
 - **Backend:** Node.js, Express.js
-- **Database:** Supabase (PostgreSQL)
+- **Database:** Neon PostgreSQL (Serverless PostgreSQL)
 - **Frontend:** HTML, CSS, JavaScript, Tailwind CSS
 - **Mã hóa:** crypto.createCipheriv (AES-256-GCM)
 - **Geolocation:** Browser Geolocation API
@@ -50,10 +50,14 @@ cd hanoi-traffic-backend
 npm install
 ```
 
-3. Cấu hình Supabase:
-- Tạo project trên Supabase
-- Tạo bảng `registrations` và `clicks_tracking`
-- Copy connection string và điền vào file `.env`
+3. Cấu hình Neon PostgreSQL & biến môi trường:
+- Tạo project trên Neon (https://neon.tech)
+- Chạy migration SQL: `psql "YOUR_NEON_URL" < neon-migration.sql`
+- Tạo file `.env` với các biến sau:
+  - `DATABASE_URL` - Neon connection string
+  - `ENCRYPTION_KEY` (chuỗi hex 64 ký tự cho AES-256-GCM)
+  - `ADMIN_API_TOKEN` **hoặc** cặp `ADMIN_BASIC_USER` / `ADMIN_BASIC_PASSWORD`
+  - (Tuỳ chọn) `REGISTER_RATE_LIMIT`, `REGISTER_RATE_WINDOW_MS`, `TRACK_RATE_LIMIT`, `TRACK_RATE_WINDOW_MS`, `ADMIN_COOKIE_MAX_AGE_MS`
 
 4. Chạy server:
 ```bash
@@ -72,7 +76,7 @@ node server.js
 - `POST /register` - Đăng ký người dùng mới
 
 ### Tracking
-- `POST /track-click` - Ghi nhận click với GPS/IP
+- `POST /track-click` - Ghi nhận click với GPS/IP (ẩn toạ độ & IP nếu người dùng từ chối consent)
 - `GET /api/dashboard-stats` - Lấy thống kê tổng quan
 - `GET /api/clicks` - Lấy danh sách clicks (có phân trang)
 
@@ -96,15 +100,23 @@ CREATE TABLE registrations (
 ```sql
 CREATE TABLE clicks_tracking (
   id SERIAL PRIMARY KEY,
-  registration_id INTEGER,
+  registration_id INTEGER REFERENCES registrations(id),
   ip_address TEXT,
+  ip_prefix TEXT,
+  ip_suffix_cipher TEXT,
+  ip_hash TEXT NOT NULL,
   user_agent TEXT,
   clicked_at TIMESTAMP DEFAULT NOW(),
   latitude DECIMAL(10, 8),
   longitude DECIMAL(11, 8),
+  accuracy DECIMAL(10, 2),
   consent_given BOOLEAN DEFAULT FALSE,
-  accuracy DECIMAL(10, 2)
+  consent_timestamp TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW()
 );
+CREATE INDEX IF NOT EXISTS idx_clicks_clicked_at ON clicks_tracking(clicked_at);
+CREATE INDEX IF NOT EXISTS idx_clicks_ip_hash ON clicks_tracking(ip_hash);
+CREATE INDEX IF NOT EXISTS idx_clicks_ip_prefix ON clicks_tracking(ip_prefix);
 ```
 
 ## 🚀 Tính năng nổi bật
@@ -136,12 +148,12 @@ hanoi-traffic-backend/
 │   ├── index.html            # Trang đăng ký
 │   ├── admin.html            # Dashboard admin
 │   └── success.html          # Trang thành công
-├── supabase/
-│   └── migrations/           # SQL migrations
 ├── utils/                    # Utilities
-│   ├── encryption.js         # Mã hóa dữ liệu
-│   └── tempStorage.js      # Storage tạm thời
-├── server.js                 # Server chính
+│   ├── encryption.js         # Mã hóa dữ liệu AES-256-GCM
+│   └── neon-db.js           # Neon PostgreSQL connection pool
+├── server.js                 # Server chính (Express + Neon)
+├── neon-migration.sql        # SQL migration cho Neon
+├── test-neon-connection.js   # Test kết nối database
 ├── package.json              # Dependencies
 └── .env                      # Environment variables
 ```
@@ -153,6 +165,22 @@ hanoi-traffic-backend/
 - Sử dụng environment variables của hosting service
 - Rotate API keys định kỳ
 - Implement rate limiting cho API endpoints
+- Admin dashboard được bảo vệ bằng Basic Auth hoặc token:
+  - Nếu cấu hình `ADMIN_BASIC_USER` + `ADMIN_BASIC_PASSWORD`: trình duyệt sẽ yêu cầu đăng nhập trước khi truy cập `/admin`
+  - Nếu chỉ dùng `ADMIN_API_TOKEN`: truy cập lần đầu qua `https://host/admin?token=YOUR_TOKEN`, server sẽ thiết lập cookie HttpOnly và tự redirect sang `/admin`
+- `/track-click` chỉ lưu hash của IP khi người dùng từ chối chia sẻ thông tin, đồng thời bỏ toàn bộ toạ độ/độ chính xác.
+- ENCRYPTION_KEY phải luôn là chuỗi hex 64 ký tự; đổi key = phải rotate dữ liệu cũ.
+
+## 🔐 Rate limiting & logging
+- `POST /register`: mặc định 50 yêu cầu / 15 phút (config qua biến môi trường)
+- `POST /track-click`: mặc định 120 yêu cầu / phút
+- Mọi request đều được log với IP, route, status và thời gian xử lý để phục vụ audit.
+
+## 🧪 Kiểm thử
+- `npm run test:db`: kiểm tra kết nối Neon và schema
+- `node test-api.js`: kiểm tra nhanh endpoint đăng ký
+- `node test-tracking.js`: gửi 2 tình huống tracking (có consent & không consent)
+- `node test-system.js`: test DB + API admin (cần `ADMIN_API_TOKEN` hoặc Basic Auth)
 
 ## 📝 License
 

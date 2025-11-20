@@ -1,10 +1,27 @@
 const crypto = require('crypto');
 
-// Load encryption key from environment or generate one (32 bytes for AES-256)
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY ? 
-  Buffer.from(process.env.ENCRYPTION_KEY, 'hex').length === 32 ? process.env.ENCRYPTION_KEY : crypto.randomBytes(32).toString('hex') :
-  crypto.randomBytes(32).toString('hex');
+const HEX_KEY_LENGTH = 64; // 32 bytes
 const ALGORITHM = 'aes-256-gcm';
+let cachedEncryptionKey;
+
+/**
+ * Lấy encryption key dạng Buffer, đảm bảo hợp lệ
+ * @returns {Buffer}
+ */
+function getEncryptionKey() {
+  if (cachedEncryptionKey) {
+    return cachedEncryptionKey;
+  }
+
+  const keyHex = process.env.ENCRYPTION_KEY;
+
+  if (!keyHex || keyHex.length !== HEX_KEY_LENGTH || !/^[0-9a-fA-F]+$/.test(keyHex)) {
+    throw new Error('ENCRYPTION_KEY phải là chuỗi hex 64 ký tự (32 bytes) để mã hóa AES-256-GCM');
+  }
+
+  cachedEncryptionKey = Buffer.from(keyHex, 'hex');
+  return cachedEncryptionKey;
+}
 
 /**
  * Mã hóa dữ liệu nhạy cảm
@@ -16,7 +33,7 @@ function encrypt(text) {
   
   try {
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY, 'hex'), iv);
+    const cipher = crypto.createCipheriv(ALGORITHM, getEncryptionKey(), iv);
     cipher.setAAD(Buffer.from('additional-data'));
     
     let encrypted = cipher.update(text, 'utf8', 'hex');
@@ -52,7 +69,7 @@ function decrypt(encryptedData) {
     const authTag = Buffer.from(decoded.authTag, 'hex');
     const encryptedText = decoded.data;
     
-    const decipher = crypto.createDecipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY, 'hex'), iv);
+    const decipher = crypto.createDecipheriv(ALGORITHM, getEncryptionKey(), iv);
     decipher.setAuthTag(authTag);
     decipher.setAAD(Buffer.from('additional-data'));
     
@@ -107,18 +124,36 @@ function hashData(data, salt = '') {
  * @returns {string} - IP đã mã hóa
  */
 function encryptIP(ip) {
-  if (!ip) return null;
-  
-  // Giữ lại 2 octet đầu để có thể phân tích vùng miền
-  const parts = ip.split('.');
-  if (parts.length === 4) {
+  if (!ip) {
+    return {
+      masked: null,
+      prefix: null,
+      suffixCipher: null,
+      hash: null
+    };
+  }
+
+  const normalized = ip.replace(/^::ffff:/, '');
+  const hash = hashData(normalized, 'ip-hash-salt');
+  const parts = normalized.split('.');
+
+  if (parts.length === 4 && parts.every(part => /^\d{1,3}$/.test(part))) {
     const prefix = parts.slice(0, 2).join('.');
     const suffix = parts.slice(2).join('.');
-    const encryptedSuffix = encrypt(suffix);
-    return `${prefix}.${encryptedSuffix}`;
+    return {
+      masked: `${parts[0]}.${parts[1]}.*.*`,
+      prefix,
+      suffixCipher: encrypt(suffix),
+      hash
+    };
   }
-  
-  return encrypt(ip);
+
+  return {
+    masked: normalized.substring(0, 4) + '***',
+    prefix: null,
+    suffixCipher: encrypt(normalized),
+    hash
+  };
 }
 
 /**
@@ -145,5 +180,6 @@ module.exports = {
   decryptObject,
   hashData,
   encryptIP,
-  isEncrypted
+  isEncrypted,
+  getEncryptionKey
 };
