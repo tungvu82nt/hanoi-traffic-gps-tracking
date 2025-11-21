@@ -161,7 +161,7 @@ Hiển thị <span id="startRecord">0</span> đến <span id="endRecord">0</span
 
 <script>
 // Admin Dashboard JavaScript
-const API_BASE = '';
+const API_BASE = window.location.origin;
 let currentPage = 1;
 const itemsPerPage = 20;
 
@@ -192,7 +192,15 @@ function setupEventListeners() {
 
 async function loadDashboardStats() {
     try {
-        const response = await fetch(`${API_BASE}/api/dashboard-stats`);
+        const url = `${API_BASE}/api/dashboard-stats`;
+        const response = await fetch(url, {
+            credentials: 'same-origin'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
         const data = await response.json();
         
         document.getElementById('totalClicks').textContent = data.totalClicks.toLocaleString();
@@ -220,7 +228,15 @@ async function loadClicksData(page = 1) {
             location: locationFilter
         });
         
-        const response = await fetch(`${API_BASE}/api/clicks?${params}`);
+        const url = `${API_BASE}/api/clicks?${params}`;
+        const response = await fetch(url, {
+            credentials: 'same-origin'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
         const data = await response.json();
         
         renderClicksTable(data.clicks);
@@ -253,11 +269,8 @@ function renderClicksTable(clicks) {
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 ${click.ip_address ? 
-                    `<div class="flex flex-col">
-                        <span class="text-sm font-mono">${click.ip_address.substring(0, 8)}...</span>
-                        <span class="text-xs text-gray-500">Đã mã hóa</span>
-                    </div>` : 
-                    'N/A'
+                    `<span class="font-mono text-gray-700">${click.ip_address}</span>` : 
+                    '<span class="text-gray-400">N/A</span>'
                 }
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -266,8 +279,8 @@ function renderClicksTable(clicks) {
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mb-1">
                             Có GPS
                         </span>
-                        <span class="text-xs text-gray-600">${click.latitude.toFixed(6)}, ${click.longitude.toFixed(6)}</span>
-                        ${click.accuracy ? `<span class="text-xs text-gray-500">±${click.accuracy.toFixed(0)}m</span>` : ''}
+                        <span class="text-xs text-gray-600">${parseFloat(click.latitude).toFixed(6)}, ${parseFloat(click.longitude).toFixed(6)}</span>
+                        ${click.accuracy ? `<span class="text-xs text-gray-500">±${parseFloat(click.accuracy).toFixed(0)}m</span>` : ''}
                     </div>` : 
                     '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Không GPS</span>'
                 }

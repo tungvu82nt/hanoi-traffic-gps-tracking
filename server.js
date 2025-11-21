@@ -6,6 +6,7 @@ const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const { query, transaction, testConnection } = require('./utils/neon-db');
 const { encryptIP, encryptObject, hashData } = require('./utils/encryption');
+const { getGeoFromIP } = require('./utils/ipinfo');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -204,35 +205,42 @@ app.post('/track-click', trackingLimiter, async (req, res) => {
     const userAgent = req.get('User-Agent');
     const consented = Boolean(consent_given);
 
-    // Mã hóa IP
-    const {
-      masked: maskedIp,
-      prefix: ipPrefix,
-      suffixCipher: ipSuffixCipher,
-      hash: ipHash
-    } = encryptIP(clientIp);
-    
+    // Chỉ hash IP để tracking unique users, không mã hóa IP gốc
+    const ipHash = hashData(clientIp, 'ip-hash-salt');
     const hashedUserAgent = hashData(userAgent, 'user-agent-salt');
+
+    // 🌍 Lấy thông tin Geo từ IP (IPInfo.io)
+    let geoData = null;
+    try {
+      geoData = await getGeoFromIP(clientIp);
+    } catch (geoErr) {
+      console.error('[IPInfo] Geo lookup failed:', geoErr.message);
+      // Không block request nếu IPInfo fail
+    }
 
     // Insert vào Neon PostgreSQL
     const result = await query(
       `INSERT INTO clicks_tracking (
-        registration_id, ip_address, ip_prefix, ip_suffix_cipher, ip_hash,
+        registration_id, ip_address, ip_hash,
         user_agent, latitude, longitude, accuracy,
+        country, city, region, timezone, isp,
         consent_given, consent_timestamp, element_id, element_type, page_url,
         clicked_at, created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NOW(), NOW())
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, NOW(), NOW())
       RETURNING id`,
       [
         registration_id || null,
-        consented ? maskedIp : null,
-        consented ? ipPrefix : null,
-        consented ? ipSuffixCipher : null,
+        consented ? clientIp : null,  // Lưu IP gốc (không mã hóa) cho admin
         ipHash,
         hashedUserAgent,
         consented ? latitude : null,
         consented ? longitude : null,
         consented ? accuracy : null,
+        geoData?.country || null,
+        geoData?.city || null,
+        geoData?.region || null,
+        geoData?.timezone || null,
+        geoData?.isp || null,
         consented,
         consented ? new Date().toISOString() : null,
         elementId || null,
@@ -244,7 +252,8 @@ app.post('/track-click', trackingLimiter, async (req, res) => {
     res.json({ 
       success: true, 
       message: 'Đã ghi nhận click thành công.',
-      id: result.rows[0].id
+      id: result.rows[0].id,
+      geo: geoData ? { city: geoData.city, country: geoData.country } : null
     });
 
   } catch (error) {
@@ -360,6 +369,19 @@ app.get('/api/health', async (req, res) => {
       error: error.message
     });
   }
+});
+
+// Test endpoint để xem IP
+app.get('/api/my-ip', (req, res) => {
+  res.json({
+    ip: req.ip,
+    xff: req.get('x-forwarded-for'),
+    realIp: req.get('x-real-ip'),
+    headers: {
+      'x-forwarded-for': req.get('x-forwarded-for'),
+      'x-real-ip': req.get('x-real-ip')
+    }
+  });
 });
 
 app.listen(PORT, () => {

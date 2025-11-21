@@ -35,7 +35,7 @@ Hệ thống đăng ký và theo dõi người dùng cho dự án an toàn giao 
 - **Database:** Neon PostgreSQL (Serverless PostgreSQL)
 - **Frontend:** HTML, CSS, JavaScript, Tailwind CSS
 - **Mã hóa:** crypto.createCipheriv (AES-256-GCM)
-- **Geolocation:** Browser Geolocation API
+- **Geolocation:** Browser Geolocation API + IPInfo.io
 
 ## 📦 Cài đặt
 
@@ -57,6 +57,7 @@ npm install
   - `DATABASE_URL` - Neon connection string
   - `ENCRYPTION_KEY` (chuỗi hex 64 ký tự cho AES-256-GCM)
   - `ADMIN_API_TOKEN` **hoặc** cặp `ADMIN_BASIC_USER` / `ADMIN_BASIC_PASSWORD`
+  - `IPINFO_API_KEY` - IPInfo.io API key cho geolocation (optional, free 50k/month)
   - (Tuỳ chọn) `REGISTER_RATE_LIMIT`, `REGISTER_RATE_WINDOW_MS`, `TRACK_RATE_LIMIT`, `TRACK_RATE_WINDOW_MS`, `ADMIN_COOKIE_MAX_AGE_MS`
 
 4. Chạy server:

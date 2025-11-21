@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const serverless = require('serverless-http');
 const cors = require('cors');
@@ -6,7 +7,7 @@ const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const { query } = require('../../utils/neon-db');
 const { encryptIP, hashData } = require('../../utils/encryption');
-require('dotenv').config();
+const { getGeoFromIP } = require('../../utils/ipinfo');
 
 // Khởi tạo Express app
 const app = express();
@@ -184,40 +185,55 @@ app.post('/track-click', trackingLimiter, async (req, res) => {
     latitude,
     longitude,
     accuracy,
-    consent_given = false
+    consent_given = false,
+    elementId,
+    elementType,
+    pageUrl
   } = req.body;
 
   const ip_address = req.ip || req.connection.remoteAddress;
   const user_agent = req.get('User-Agent');
 
   try {
-    const {
-      masked: maskedIp,
-      prefix: ipPrefix,
-      suffixCipher: ipSuffixCipher,
-      hash: ipHash
-    } = encryptIP(ip_address);
+    // Chỉ hash IP để tracking unique users
+    const ipHash = hashData(ip_address, 'ip-hash-salt');
     const hashed_user_agent = hashData(user_agent, 'user-agent-salt');
     const consented = Boolean(consent_given);
 
+    // 🌍 Lấy thông tin Geo từ IP (IPInfo.io)
+    let geoData = null;
+    try {
+      geoData = await getGeoFromIP(ip_address);
+    } catch (geoErr) {
+      console.error('[IPInfo] Geo lookup failed:', geoErr.message);
+    }
+
     await query(
       `INSERT INTO clicks_tracking (
-        registration_id, ip_address, ip_prefix, ip_suffix_cipher, ip_hash,
+        registration_id, ip_address, ip_hash,
         user_agent, latitude, longitude, accuracy,
-        consent_given, consent_timestamp, clicked_at, created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())`,
+        country, city, region, timezone, isp,
+        consent_given, consent_timestamp, element_id, element_type, page_url,
+        clicked_at, created_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, NOW(), NOW())`,
       [
         registration_id || null,
-        consented ? maskedIp : null,
-        consented ? ipPrefix : null,
-        consented ? ipSuffixCipher : null,
+        consented ? ip_address : null,  // Lưu IP gốc cho admin
         ipHash,
         hashed_user_agent,
         consented ? latitude : null,
         consented ? longitude : null,
         consented ? accuracy : null,
+        geoData?.country || null,
+        geoData?.city || null,
+        geoData?.region || null,
+        geoData?.timezone || null,
+        geoData?.isp || null,
         consented,
-        consented ? new Date().toISOString() : null
+        consented ? new Date().toISOString() : null,
+        elementId || null,
+        elementType || null,
+        pageUrl || null
       ]
     );
 
