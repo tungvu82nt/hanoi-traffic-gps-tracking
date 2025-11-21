@@ -47,3 +47,7 @@ coverage/
 *.tmp
 *.temp
 .cache/
+
+# Local MCP secret files
+.mcp/secrets.json
+.mcp/*.secret.json

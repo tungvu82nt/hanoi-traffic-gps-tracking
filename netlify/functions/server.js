@@ -153,6 +153,7 @@ app.use((req, res, next) => {
   return next();
 });
 
+// (diagnostic endpoint removed)
 // Neon PostgreSQL - connection được xử lý bởi utils/neon-db.js
 
 // Không cần helper functions với Neon PostgreSQL
@@ -191,13 +192,13 @@ app.post('/track-click', trackingLimiter, async (req, res) => {
     pageUrl
   } = req.body;
 
-  const ip_address = req.ip || req.connection.remoteAddress;
-  const user_agent = req.get('User-Agent');
+  const ip_address = (req.ip || (req.connection && req.connection.remoteAddress) || req.get('x-forwarded-for') || req.get('x-real-ip') || '0.0.0.0');
+  const user_agent = req.get('User-Agent') || 'unknown';
 
   try {
     // Chỉ hash IP để tracking unique users
-    const ipHash = hashData(ip_address, 'ip-hash-salt');
-    const hashed_user_agent = hashData(user_agent, 'user-agent-salt');
+    const ipHash = hashData(String(ip_address), 'ip-hash-salt') || hashData('0.0.0.0', 'ip-hash-salt');
+    const hashed_user_agent = hashData(String(user_agent), 'user-agent-salt') || hashData('unknown', 'user-agent-salt');
     const consented = Boolean(consent_given);
 
     // 🌍 Lấy thông tin Geo từ IP (IPInfo.io)
