@@ -1,225 +1,385 @@
 <!DOCTYPE html>
-<html class="light" lang="vi"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Cập nhật An toàn Giao thông Hà Nội</title>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;800&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#137fec",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101922",
-                    },
-                    fontFamily: {
-                        "display": ["Public Sans", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                },
+<html class="light" lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Cập nhật An toàn Giao thông Hà Nội</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#137fec",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101922",
             },
-        }
+            fontFamily: {
+              display: ["Public Sans", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
     </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
     </style>
-<style>
-        body {
-            min-height: max(884px, 100dvh);
-        }
-        .snap-x {
-            scroll-snap-type: x mandatory;
-        }
-        .snap-center {
-            scroll-snap-align: center;
-        }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;scrollbar-width: none;}
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+      .snap-x {
+        scroll-snap-type: x mandatory;
+      }
+      .snap-center {
+        scroll-snap-align: center;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
     </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
   </head>
-<body class="font-display">
-<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
-<div class="p-6 pt-8">
-<h1 class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-tight">Cập Nhật An Toàn Giao Thông Hà Nội</h1>
-<p class="text-slate-600 dark:text-slate-300 mt-2 text-base leading-relaxed">Đừng để những thay đổi bất ngờ về giao thông cản trở lộ trình của bạn. Đăng ký ngay để nhận thông báo mới nhất về tình hình giao thông, biển báo, và các quy định an toàn tại Hà Nội, giúp bạn di chuyển an toàn và hiệu quả hơn.</p>
-</div>
-<div class="relative w-full overflow-hidden px-6 pt-4">
-<div class="flex snap-x snap-mandatory gap-4 overflow-x-auto no-scrollbar">
-<div class="w-full flex-shrink-0 snap-center">
-          <img alt="Hình ảnh an toàn giao thông 1" class="aspect-[16/9] w-full rounded-xl object-cover" src="https://cdn.xanhsm.com/2023/06/6aaf1f6e-trai-nghiem-taxi-xanh-sm.jpg"/>
+  <body class="font-display">
+    <div
+      class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden"
+    >
+      <div class="p-6 pt-8">
+        <h1
+          class="text-slate-900 dark:text-white tracking-tight text-3xl font-bold leading-tight"
+        >
+          Cập Nhật An Toàn Giao Thông Hà Nội
+        </h1>
+        <p
+          class="text-slate-600 dark:text-slate-300 mt-2 text-base leading-relaxed"
+        >
+          Đừng để những thay đổi bất ngờ về giao thông cản trở lộ trình của bạn.
+          Đăng ký ngay để nhận thông báo mới nhất về tình hình giao thông, biển
+          báo, và các quy định an toàn tại Hà Nội, giúp bạn di chuyển an toàn và
+          hiệu quả hơn.
+        </p>
+      </div>
+      <div class="relative w-full overflow-hidden px-6 pt-4">
+        <div
+          class="flex snap-x snap-mandatory gap-4 overflow-x-auto no-scrollbar"
+        >
+          <div class="w-full flex-shrink-0 snap-center">
+            <img
+              alt="Hình ảnh an toàn giao thông 1"
+              class="aspect-[16/9] w-full rounded-xl object-cover"
+              src="https://cdn.xanhsm.com/2023/06/6aaf1f6e-trai-nghiem-taxi-xanh-sm.jpg"
+            />
+          </div>
+          <div class="w-full flex-shrink-0 snap-center">
+            <img
+              alt="Hình ảnh an toàn giao thông 2"
+              class="aspect-[16/9] w-full rounded-xl object-cover"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYJcDQo0LVvgd3hlnEKtoqW5tkssOzvot2T1h9qXUCSZdkG2-6m3p8qhRzUOw-NY1Bub-QXybBAGq3Wrx19-qoBmZlqzKLupZjk-La_Ib135sJ-F8isrTo7wWnYpBPlPmvKDP2RtcZrzVDdnuBcaA3i9-GxuvWVkQP7XBwTOscet3NtIdIWphK4pz8GOq0jTRhjlRL0UtpiDdo4LhwR4fe8fh_BTlhlNEvLR_RMahqQfdYmu6LN0-nJ5MqBdEC8ESbi97vSuIkmdE"
+            />
+          </div>
         </div>
-<div class="w-full flex-shrink-0 snap-center">
-<img alt="Hình ảnh an toàn giao thông 2" class="aspect-[16/9] w-full rounded-xl object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYJcDQo0LVvgd3hlnEKtoqW5tkssOzvot2T1h9qXUCSZdkG2-6m3p8qhRzUOw-NY1Bub-QXybBAGq3Wrx19-qoBmZlqzKLupZjk-La_Ib135sJ-F8isrTo7wWnYpBPlPmvKDP2RtcZrzVDdnuBcaA3i9-GxuvWVkQP7XBwTOscet3NtIdIWphK4pz8GOq0jTRhjlRL0UtpiDdo4LhwR4fe8fh_BTlhlNEvLR_RMahqQfdYmu6LN0-nJ5MqBdEC8ESbi97vSuIkmdE"/>
-</div>
-<div class="w-full flex-shrink-0 snap-center">
-<!-- Form submission handler -->
-<script src="/form-handler.js"></script>
+      </div>
 
+      <div class="flex flex-col gap-6 p-6">
+        <h2
+          class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-tight"
+        >
+          Đăng ký nhận thông báo
+        </h2>
+        <form class="flex flex-col gap-4" action="/register" method="POST">
+          <label class="flex flex-col min-w-40 gap-1.5">
+            <p
+              class="text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal"
+            >
+              Email
+            </p>
+            <input
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 h-11 placeholder:text-slate-500 dark:placeholder:text-slate-400 px-3 text-base font-normal leading-normal"
+              placeholder="email@example.com"
+              type="email"
+              name="email"
+              required
+            />
+          </label>
+          <label class="flex flex-col min-w-40 gap-1.5">
+            <p
+              class="text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal"
+            >
+              Số điện thoại
+            </p>
+            <input
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 h-11 placeholder:text-slate-500 dark:placeholder:text-slate-400 px-3 text-base font-normal leading-normal"
+              placeholder="Nhập số điện thoại"
+              type="tel"
+              name="phone"
+              required
+            />
+          </label>
+          <label class="flex flex-col min-w-40 gap-1.5">
+            <p
+              class="text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal"
+            >
+              Họ tên
+            </p>
+            <input
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 h-11 placeholder:text-slate-500 dark:placeholder:text-slate-400 px-3 text-base font-normal leading-normal"
+              placeholder="Nhập họ và tên"
+              type="text"
+              name="fullName"
+              required
+            />
+          </label>
+          <label class="flex flex-col min-w-40 gap-1.5">
+            <p
+              class="text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal"
+            >
+              Ngày sinh
+            </p>
+            <input
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 h-11 placeholder:text-slate-500 dark:placeholder:text-slate-400 px-3 text-base font-normal leading-normal"
+              type="date"
+              name="dob"
+              required
+            />
+          </label>
+          <label class="flex flex-col min-w-40 gap-1.5">
+            <p
+              class="text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal"
+            >
+              Biển số xe
+            </p>
+            <input
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 h-11 placeholder:text-slate-500 dark:placeholder:text-slate-400 px-3 text-base font-normal leading-normal"
+              placeholder="Ví dụ: 29A-123.45"
+              type="text"
+              name="plate"
+              required
+            />
+          </label>
+          <label class="flex flex-col min-w-40 gap-1.5">
+            <p
+              class="text-slate-800 dark:text-slate-200 text-sm font-medium leading-normal"
+            >
+              Loại xe
+            </p>
+            <select
+              class="form-select flex w-full min-w-0 flex-1 cursor-pointer resize-none overflow-hidden rounded-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 h-11 placeholder:text-slate-500 dark:placeholder:text-slate-400 px-3 text-base font-normal leading-normal"
+              name="vehicleType"
+              required
+            >
+              <option value="" disabled selected>Chọn loại xe</option>
+              <option>Xe máy</option>
+              <option>Ô tô</option>
+              <option>Xe tải</option>
+              <option>Khác</option>
+            </select>
+          </label>
+          <button
+            type="submit"
+            class="flex items-center justify-center gap-2 h-12 px-6 mt-4 rounded-full bg-primary text-white text-base font-bold w-full ak-AuthButton"
+          >
+            <span
+              data-has-icon="false"
+              class="rt-Text rt-r-size-2 xs:rt-r-size-3 ak-AuthButtonLabel"
+              >Đăng ký ngay</span
+            >
+          </button>
+        </form>
+      </div>
+    </div>
 
-<div id="consentBanner" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 transform translate-y-full transition-transform duration-300 z-50">
-<div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between">
-<div class="mb-4 sm:mb-0 sm:mr-4">
-<h3 class="text-lg font-semibold mb-2">Chúng tôi thu thập dữ liệu vị trí</h3>
-<p class="text-sm text-gray-300">
-Chúng tôi có thể thu thập địa chỉ IP và vị trí GPS của bạn để cải thiện dịch vụ. 
-Bạn có thể từ chối chia sẻ vị trí nếu không muốn.
-</p>
-</div>
-<div class="flex space-x-3">
-<button id="acceptConsent" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
-Đồng ý
-</button>
-<button id="denyConsent" class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 text-sm font-medium">
-Từ chối
-</button>
-</div>
-</div>
-</div>
+    <!-- Form submission handler -->
+    <script src="/form-handler.js"></script>
 
-<script>
-// GDPR Consent Management
-let userConsent = localStorage.getItem('locationConsent') === 'true';
-let consentTimestamp = localStorage.getItem('consentTimestamp');
+    <div
+      id="consentBanner"
+      class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 transform translate-y-full transition-transform duration-300 z-50"
+    >
+      <div
+        class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between"
+      >
+        <div class="mb-4 sm:mb-0 sm:mr-4">
+          <h3 class="text-lg font-semibold mb-2">
+            Chúng tôi thu thập dữ liệu vị trí
+          </h3>
+          <p class="text-sm text-gray-300">
+            Chúng tôi có thể thu thập địa chỉ IP và vị trí GPS của bạn để cải
+            thiện dịch vụ. Bạn có thể từ chối chia sẻ vị trí nếu không muốn.
+          </p>
+        </div>
+        <div class="flex space-x-3">
+          <button
+            id="acceptConsent"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+          >
+            Đồng ý
+          </button>
+          <button
+            id="denyConsent"
+            class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 text-sm font-medium"
+          >
+            Từ chối
+          </button>
+        </div>
+      </div>
+    </div>
 
-// Show consent banner if no consent recorded
-if (!localStorage.getItem('locationConsent')) {
-    setTimeout(() => {
-        document.getElementById('consentBanner').classList.remove('translate-y-full');
-    }, 1000);
-}
+    <script>
+      // GDPR Consent Management
+      let userConsent = localStorage.getItem("locationConsent") === "true";
+      let consentTimestamp = localStorage.getItem("consentTimestamp");
 
-// Consent handlers
-document.getElementById('acceptConsent').addEventListener('click', () => {
-    try {
-        userConsent = true;
-        consentTimestamp = new Date().toISOString();
-        localStorage.setItem('locationConsent', 'true');
-        localStorage.setItem('consentTimestamp', consentTimestamp);
-        document.getElementById('consentBanner').classList.add('translate-y-full');
-        trackClick(null, true); // Track with consent
-    } catch (error) {
-        console.error('Accept consent error:', error);
-    }
-});
+      // Show consent banner if no consent recorded
+      if (!localStorage.getItem("locationConsent")) {
+        setTimeout(() => {
+          document
+            .getElementById("consentBanner")
+            .classList.remove("translate-y-full");
+        }, 1000);
+      }
 
-document.getElementById('denyConsent').addEventListener('click', () => {
-    try {
-        userConsent = false;
-        consentTimestamp = new Date().toISOString();
-        localStorage.setItem('locationConsent', 'false');
-        localStorage.setItem('consentTimestamp', consentTimestamp);
-        document.getElementById('consentBanner').classList.add('translate-y-full');
-        trackClick(null, false); // Track without GPS
-    } catch (error) {
-        console.error('Deny consent error:', error);
-    }
-});
+      // Consent handlers
+      document.getElementById("acceptConsent").addEventListener("click", () => {
+        try {
+          userConsent = true;
+          consentTimestamp = new Date().toISOString();
+          localStorage.setItem("locationConsent", "true");
+          localStorage.setItem("consentTimestamp", consentTimestamp);
+          document
+            .getElementById("consentBanner")
+            .classList.add("translate-y-full");
+          trackClick(null, true); // Track with consent
+        } catch (error) {
+          console.error("Accept consent error:", error);
+        }
+      });
 
-// Click tracking function
-function trackClick(registrationId = null, consent = userConsent) {
-    const clickData = {
-        registration_id: registrationId,
-        consent_given: consent
-    };
+      document.getElementById("denyConsent").addEventListener("click", () => {
+        try {
+          userConsent = false;
+          consentTimestamp = new Date().toISOString();
+          localStorage.setItem("locationConsent", "false");
+          localStorage.setItem("consentTimestamp", consentTimestamp);
+          document
+            .getElementById("consentBanner")
+            .classList.add("translate-y-full");
+          trackClick(null, false); // Track without GPS
+        } catch (error) {
+          console.error("Deny consent error:", error);
+        }
+      });
 
-    // Get GPS location if consent given
-    if (consent && navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
+      // Click tracking function
+      function trackClick(registrationId = null, consent = userConsent) {
+        const clickData = {
+          registration_id: registrationId,
+          consent_given: consent,
+        };
+
+        // Get GPS location if consent given
+        if (consent && navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
             (position) => {
-                clickData.latitude = position.coords.latitude;
-                clickData.longitude = position.coords.longitude;
-                clickData.accuracy = position.coords.accuracy;
-                sendTrackingData(clickData);
+              clickData.latitude = position.coords.latitude;
+              clickData.longitude = position.coords.longitude;
+              clickData.accuracy = position.coords.accuracy;
+              sendTrackingData(clickData);
             },
             (error) => {
-                console.log('Không thể lấy vị trí GPS:', error.message);
-                sendTrackingData(clickData);
+              console.log("Không thể lấy vị trí GPS:", error.message);
+              sendTrackingData(clickData);
             },
             {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0
+              enableHighAccuracy: true,
+              timeout: 5000,
+              maximumAge: 0,
             }
-        );
-    } else {
-        sendTrackingData(clickData);
-    }
-}
+          );
+        } else {
+          sendTrackingData(clickData);
+        }
+      }
 
-// Send tracking data to server
-function sendTrackingData(data) {
-    fetch('/track-click', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(result => {
-        console.log('Tracking result:', result);
-    })
-    .catch(error => {
-        console.error('Lỗi tracking:', error);
-    });
-}
+      // Send tracking data to server
+      function sendTrackingData(data) {
+        fetch("/track-click", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            console.log("Tracking result:", result);
+          })
+          .catch((error) => {
+            console.error("Lỗi tracking:", error);
+          });
+      }
 
-// Track clicks on various elements
-document.addEventListener('DOMContentLoaded', function() {
-    // Track form submission
-    const form = document.querySelector('form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
+      // Track clicks on various elements
+      document.addEventListener("DOMContentLoaded", function () {
+        // Track form submission
+        const form = document.querySelector("form");
+        if (form) {
+          form.addEventListener("submit", function (e) {
             // Track click when user submits form
             setTimeout(() => trackClick(null, userConsent), 100);
-        });
-    }
-
-    // Track clicks on buttons and links
-    document.addEventListener('click', function(e) {
-        try {
-            const target = e.target;
-            
-            // Track button clicks
-            if (target.tagName === 'BUTTON' || target.closest('button')) {
-                trackClick(null, userConsent);
-            }
-            
-            // Track link clicks
-            if (target.tagName === 'A' || target.closest('a')) {
-                trackClick(null, userConsent);
-            }
-        } catch (error) {
-            console.error('Click tracking error:', error);
+          });
         }
-    });
 
-    // Auto-track page visit
-    setTimeout(() => {
-        trackClick(null, userConsent);
-    }, 2000);
-});
-</script>
+        // Track clicks on buttons and links
+        document.addEventListener("click", function (e) {
+          try {
+            const target = e.target;
 
-</body></html>
+            // Track button clicks
+            if (target.tagName === "BUTTON" || target.closest("button")) {
+              trackClick(null, userConsent);
+            }
+
+            // Track link clicks
+            if (target.tagName === "A" || target.closest("a")) {
+              trackClick(null, userConsent);
+            }
+          } catch (error) {
+            console.error("Click tracking error:", error);
+          }
+        });
+
+        // Auto-track page visit
+        setTimeout(() => {
+          trackClick(null, userConsent);
+        }, 2000);
+      });
+    </script>
+  </body>
+</html>
