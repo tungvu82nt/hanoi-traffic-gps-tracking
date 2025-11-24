@@ -37,9 +37,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Extract title or body text if it's HTML
                     let errorMsg = "Server lỗi (không phải JSON).";
                     if (text.includes("<title>")) {
-                        const title = text.match(/<title>(.*?)<\/title>/)[1];
-                        errorMsg += ` Title: ${title}`;
-                    } else {
+                    if (text.includes("<title>")) {
+                        const match = text.match(/<title>(.*?)<\/title>/);
+                        if (match && match[1]) {
+                            errorMsg += ` Title: ${match[1]}`;
+                        } else {
+                            errorMsg += ` Nội dung: ${text.substring(0, 100)}...`;
+                        }
+                    }                    } else {
                         errorMsg += ` Nội dung: ${text.substring(0, 100)}...`;
                     }
                     throw new Error(errorMsg);
