@@ -6,9 +6,24 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<!-- Leaflet CSS & JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
         body { font-family: 'Public Sans', sans-serif; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        #map { height: 500px; width: 100%; }
+        .marker-popup {
+            min-width: 200px;
+        }
+        .marker-popup .popup-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .marker-popup .popup-content {
+            font-size: 12px;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -34,6 +49,15 @@ Xuất Excel
 
 <!-- Stats Cards -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Map Section -->
+<div class="bg-white p-6 rounded-lg shadow mb-8">
+<h2 class="text-lg font-semibold text-gray-900 mb-4">Bản Đồ Vị Trí Click</h2>
+<div id="map" class="rounded-lg border border-gray-200"></div>
+<div class="mt-4 text-sm text-gray-500">
+<span id="mapPointsCount">0</span> điểm hiển thị trên bản đồ
+</div>
+</div>
+
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
 <div class="bg-white p-6 rounded-lg shadow">
 <div class="flex items-center">
@@ -167,6 +191,7 @@ const itemsPerPage = 20;
 
 // Load dashboard data
 document.addEventListener('DOMContentLoaded', function() {
+    initMap();
     loadDashboardStats();
     loadClicksData();
     setupEventListeners();
@@ -214,6 +239,11 @@ async function loadDashboardStats() {
 
 async function loadClicksData(page = 1) {
     showLoading(true);
+    
+    // Initialize map if not already initialized
+    if (!mapInitialized) {
+        initMap();
+    }
     
     try {
         const startDate = document.getElementById('startDate').value;
@@ -323,6 +353,116 @@ function showLoading(show) {
 function exportToExcel() {
     alert('Tính năng xuất Excel sẽ được implement trong phiên bản sau!');
 }
+
+// Map initialization and management
+let map;
+let markers = [];
+let mapData = [];
+let mapInitialized = false;
+
+function initMap() {
+    if (mapInitialized) return;
+    // Initialize map centered on Hanoi
+    map = L.map('map').setView([21.0285, 105.8542], 12);
+    
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    
+    // Add custom control to center on all markers
+    const MapCenterControl = L.Control.extend({
+        options: {
+            position: 'topleft'
+        },
+        
+        onAdd: function(map) {
+            const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+        container.style.backgroundColor = 'white';
+        container.style.width = '30px';
+        container.style.height = '30px';
+        container.style.lineHeight = '30px';
+        container.style.textAlign = 'center';
+        container.style.borderRadius = '4px';
+        container.style.boxShadow = '0 1px 5px rgba(0,0,0,0.65)';
+        container.style.cursor = 'pointer';
+        container.innerHTML = '⊕';
+        container.title = 'Tập trung vào tất cả điểm đánh dấu';
+            
+            container.onclick = function() {
+                fitMapToMarkers();
+            };
+            
+            return container;
+        }
+    });
+    
+    map.addControl(new MapCenterControl());
+    
+    // Mark map as initialized
+    mapInitialized = true;
+}
+
+function updateMap(clicks) {
+    // Clear existing markers
+    clearMapMarkers();
+    
+    // Filter clicks with GPS data
+    mapData = clicks.filter(click => click.latitude && click.longitude);
+    
+    // Update count display
+    document.getElementById('mapPointsCount').textContent = mapData.length;
+    
+    // Add new markers
+    mapData.forEach(click => {
+        const marker = L.marker([parseFloat(click.latitude), parseFloat(click.longitude)]).addTo(map);
+        
+        // Create popup content
+        const popupContent = `
+            <div class="marker-popup">
+                <div class="popup-header">Thông tin click</div>
+                <div class="popup-content">
+                    <div><strong>Thời gian:</strong> ${new Date(click.clicked_at).toLocaleString('vi-VN')}</div>
+                    <div><strong>Email:</strong> ${click.email || 'N/A'}</div>
+                    <div><strong>Vị trí:</strong> ${parseFloat(click.latitude).toFixed(6)}, ${parseFloat(click.longitude).toFixed(6)}</div>
+                    ${click.accuracy ? `<div><strong>Độ chính xác:</strong> ±${parseFloat(click.accuracy).toFixed(0)}m</div>` : ''}
+                    <div><strong>Consent:</strong> ${click.consent_given ? 'Đồng ý' : 'Không đồng ý'}</div>
+                </div>
+            </div>
+        `;
+        
+        marker.bindPopup(popupContent);
+        markers.push(marker);
+    });
+    
+    // Fit map to markers if there are any
+    if (markers.length > 0) {
+        fitMapToMarkers();
+    }
+}
+
+function clearMapMarkers() {
+    markers.forEach(marker => {
+        map.removeLayer(marker);
+    });
+    markers = [];
+}
+
+function fitMapToMarkers() {
+    if (markers.length > 0) {
+        const group = new L.featureGroup(markers);
+        map.fitBounds(group.getBounds(), { padding: [50, 50], maxZoom: 15 });
+    }
+}
+
+// Update renderClicksTable to also update the map
+const originalRenderClicksTable = renderClicksTable;
+renderClicksTable = function(clicks) {
+    originalRenderClicksTable(clicks);
+    updateMap(clicks);
+};
+
+// Map initialization already handled in main DOMContentLoaded event
 </script>
 
 </body></html>

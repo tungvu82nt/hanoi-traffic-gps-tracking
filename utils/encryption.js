@@ -162,12 +162,12 @@ function encryptIP(ip) {
  * @returns {boolean} - True nếu là dữ liệu đã mã hóa
  */
 function isEncrypted(data) {
-  if (!data) return false;
+  if (!data || typeof data !== 'string') return false;
   
   try {
     const decoded = Buffer.from(data, 'base64').toString();
     const parsed = JSON.parse(decoded);
-    return parsed.iv && parsed.authTag && parsed.data;
+    return !!(parsed && parsed.iv && parsed.authTag && parsed.data);
   } catch {
     return false;
   }

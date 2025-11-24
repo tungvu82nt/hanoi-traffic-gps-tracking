@@ -85,15 +85,6 @@
         "<REDACTED_KEY>"
       ]
     },
-    "fetch": {
-      "command": "python",
-      "args": [
-        "-m",
-        "mcp_server_fetch"
-      ],
-      "fromGalleryId": "modelcontextprotocol.servers_fetch",
-      "disabled": true
-    },
     "mcp-ip-query": {
       "url": "https://mcp.higress.ai/mcp-ip-query/cmhgn6c39003ibf014bny13vc"
     },
@@ -117,11 +108,10 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "/path/to/allowed/directory"
+        "d:/Tool/WEB/hp/1/hanoi-traffic-gps-tracking - Copy"
       ],
       "env": {},
-      "fromGalleryId": "modelcontextprotocol.servers_filesystem",
-      "disabled": true
+      "fromGalleryId": "modelcontextprotocol.servers_filesystem"
     },
     "File System": {
       "command": "npx -y @bunas/fs-mcp@latest",

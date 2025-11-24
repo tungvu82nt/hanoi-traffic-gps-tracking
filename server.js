@@ -7,6 +7,9 @@ const cookieParser = require('cookie-parser');
 const { query, transaction, testConnection } = require('./utils/neon-db');
 const { encryptIP, encryptObject, hashData } = require('./utils/encryption');
 const { getGeoFromIP } = require('./utils/ipinfo');
+const { OAuth2Client } = require('google-auth-library');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -159,6 +162,8 @@ app.use((req, res, next) => {
 
 // Phục vụ file tĩnh
 app.use(express.static(path.join(__dirname, 'public')));
+// Phục vụ file trong thư mục docs
+app.use('/docs', express.static(path.join(__dirname, 'docs')));
 
 // Endpoint đăng ký
 app.post('/register', registerLimiter, async (req, res) => {
@@ -185,7 +190,108 @@ app.post('/register', registerLimiter, async (req, res) => {
   }
 });
 
-// Không cần các helper function này nữa với Neon PostgreSQL
+// Endpoint đăng ký Google OAuth
+app.post('/register-google', registerLimiter, async (req, res) => {
+  const { credential, phone, dob, plate, vehicleType } = req.body;
+
+  // Validate Google credential
+  if (!credential) {
+    return res.status(400).json({ error: 'Thiếu Google credential.' });
+  }
+
+  let email, fullName, picture;
+
+  try {
+    // Verify Google Token
+    const ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    
+    email = payload.email;
+    fullName = payload.name;
+    picture = payload.picture;
+    
+    console.log('✅ Verified Google User:', email);
+    
+    // Kiểm tra email đã tồn tại chưa
+    const existingUser = await query(
+      'SELECT id FROM registrations WHERE email = $1',
+      [email.trim()]
+    );
+
+    if (existingUser.rows.length > 0) {
+      return res.status(409).json({ 
+        error: 'Email này đã được đăng ký. Vui lòng sử dụng email khác.' 
+      });
+    }
+
+    const result = await query(
+      `INSERT INTO registrations (email, full_name, phone, dob, plate, vehicle_type, picture, google_verified, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+       RETURNING id`,
+      [
+        email.trim(), 
+        fullName.trim(), 
+        phone?.trim() || null, 
+        dob || null, 
+        plate?.trim() || null, 
+        vehicleType?.trim() || null,
+        picture || null,
+        true
+      ]
+    );
+
+    console.log('✅ Đăng ký Google thành công, ID:', result.rows[0].id);
+    return res.json({ 
+      success: true, 
+      registrationId: result.rows[0].id,
+      message: 'Đăng ký Google thành công!' 
+    });
+    
+  } catch (err) {
+    console.error('❌ Lỗi đăng ký Google:', err);
+    return res.status(500).json({ error: 'Lỗi server khi đăng ký Google.' });
+  }
+});
+
+// API endpoint cập nhật thông tin người dùng (sau khi đăng ký Google)
+app.put('/update-registration', registerLimiter, async (req, res) => {
+  const { email, phone, dob, plate, vehicleType } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Thiếu email.' });
+  }
+
+  try {
+    const result = await query(
+      `UPDATE registrations 
+       SET phone = COALESCE($2, phone), 
+           dob = COALESCE($3, dob), 
+           plate = COALESCE($4, plate), 
+           vehicle_type = COALESCE($5, vehicle_type),
+           updated_at = NOW()
+       WHERE email = $1
+       RETURNING id`,
+      [email.trim(), phone?.trim(), dob, plate?.trim(), vehicleType?.trim()]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Không tìm thấy người dùng.' });
+    }
+
+    console.log('✅ Cập nhật thông tin thành công, ID:', result.rows[0].id);
+    return res.json({ 
+      success: true, 
+      message: 'Cập nhật thông tin thành công!' 
+    });
+    
+  } catch (err) {
+    console.error('❌ Lỗi cập nhật thông tin:', err);
+    return res.status(500).json({ error: 'Lỗi server.' });
+  }
+});
 
 // API endpoint tracking clicks với Neon PostgreSQL
 app.post('/track-click', trackingLimiter, async (req, res) => {

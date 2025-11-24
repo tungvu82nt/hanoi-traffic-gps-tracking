@@ -5,7 +5,6 @@
 
 const https = require('https');
 
-const IPINFO_API_KEY = process.env.IPINFO_API_KEY;
 const IPINFO_TIMEOUT = 5000; // 5 seconds timeout
 
 /**
@@ -14,6 +13,9 @@ const IPINFO_TIMEOUT = 5000; // 5 seconds timeout
  * @returns {Promise<Object>} Geo data hoặc null nếu thất bại
  */
 async function getGeoFromIP(ip) {
+  // Lấy API key từ biến môi trường mỗi khi hàm được gọi
+  const IPINFO_API_KEY = process.env.IPINFO_API_KEY;
+  
   // Bỏ qua nếu không có API key
   if (!IPINFO_API_KEY) {
     console.log('[IPInfo] No API key configured, skipping geo lookup');

@@ -12,7 +12,15 @@ CREATE TABLE IF NOT EXISTS registrations (
   dob DATE,
   plate VARCHAR(50),
   vehicle_type VARCHAR(50),
-  created_at TIMESTAMP DEFAULT NOW()
+  
+  -- Google OAuth fields
+  picture TEXT,
+  google_verified BOOLEAN DEFAULT FALSE,
+  google_id VARCHAR(100),
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
 );
 
 -- Index cho registrations
