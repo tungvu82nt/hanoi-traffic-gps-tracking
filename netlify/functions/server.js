@@ -153,8 +153,101 @@ app.use((req, res, next) => {
   return next();
 });
 
-// (diagnostic endpoint removed)
-// Neon PostgreSQL - connection được xử lý bởi utils/neon-db.js
+// Routes
+app.post('/register', registerLimiter, async (req, res) => {
+  const { email, phone, fullName, dob, plate, vehicleType } = req.body;
+
+  if (!email || !phone || !fullName || !dob || !plate || !vehicleType) {
+    return res.status(400).json({ error: 'Vui lòng điền đầy đủ thông tin.' });
+  }
+
+  try {
+    const result = await query(
+      `INSERT INTO registrations (email, phone, full_name, dob, plate, vehicle_type, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, NOW())
+       RETURNING id`,
+      [email.trim(), phone.trim(), fullName.trim(), dob, plate.trim(), vehicleType.trim()]
+    );
+
+    return res.json({ success: true, id: result.rows[0].id });
+  } catch (err) {
+    console.error('Server error:', err);
+    return res.status(500).json({ error: 'Lỗi server.' });
+  }
+});
+
+app.post('/track-click', trackingLimiter, async (req, res) => {
+  const {
+    registration_id,
+    latitude,
+    longitude,
+    accuracy,
+    consent_given = false,
+    elementId,
+    elementType,
+    pageUrl
+  } = req.body;
+
+  const ip_address = (req.ip || (req.connection && req.connection.remoteAddress) || req.get('x-forwarded-for') || req.get('x-real-ip') || '0.0.0.0');
+  const user_agent = req.get('User-Agent') || 'unknown';
+
+  try {
+    const ipHash = hashData(String(ip_address), 'ip-hash-salt') || hashData('0.0.0.0', 'ip-hash-salt');
+    const hashed_user_agent = hashData(String(user_agent), 'user-agent-salt') || hashData('unknown', 'user-agent-salt');
+    const consented = Boolean(consent_given);
+
+    let geoData = null;
+    try {
+      geoData = await getGeoFromIP(ip_address);
+    } catch (geoErr) {
+      console.error('[IPInfo] Geo lookup failed:', geoErr.message);
+    }
+
+    await query(
+      `INSERT INTO clicks_tracking (
+        registration_id, ip_address, ip_hash,
+        user_agent, latitude, longitude, accuracy,
+        country, city, region, timezone, isp,
+        consent_given, consent_timestamp, element_id, element_type, page_url,
+        clicked_at, created_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, NOW(), NOW())`,
+      [
+        registration_id || null,
+        consented ? ip_address : null,
+        ipHash,
+        hashed_user_agent,
+        consented ? latitude : null,
+        consented ? longitude : null,
+        consented ? accuracy : null,
+        geoData?.country || null,
+        geoData?.city || null,
+        geoData?.region || null,
+        geoData?.timezone || null,
+        geoData?.isp || null,
+        consented,
+        consented ? new Date().toISOString() : null,
+        elementId || null,
+        elementType || null,
+        pageUrl || null
+      ]
+    );
+
+    res.json({ success: true, message: 'Đã ghi nhận click thành công.' });
+  } catch (err) {
+    console.error('Lỗi server tracking:', err);
+    res.status(500).json({ error: 'Lỗi server.' });
+  }
+});
+
+app.get('/api/dashboard-stats', requireAdminAuth, async (req, res) => {
+  try {
+    const stats = await query(`
+      SELECT 
+        COUNT(*) as total_clicks,
+        COUNT(CASE WHEN latitude IS NOT NULL AND longitude IS NOT NULL THEN 1 END) as gps_clicks,
+        COUNT(DISTINCT ip_hash) as unique_users,
+        COUNT(CASE WHEN DATE(clicked_at) = CURRENT_DATE THEN 1 END) as today_clicks
+      FROM clicks_tracking
     `);
 
     res.json({
