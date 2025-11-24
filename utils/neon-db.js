@@ -1,4 +1,5 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const { Pool } = require('pg');
 
 /**
@@ -6,12 +7,15 @@ const { Pool } = require('pg');
  * Sử dụng connection pooling để tối ưu performance
  */
 
-// Tạo connection pool
+// Debug: Check if env is loaded
+console.log('Loading DB Config...');
+console.log('DATABASE_URL loaded:', !!process.env.DATABASE_URL);
+
 // Tạo connection pool
 let pool;
 
 if (!process.env.DATABASE_URL) {
-  console.error("❌ DATABASE_URL is missing! Database connection will fail.");
+  console.error("❌ DATABASE_URL is missing! Checking .env file at:", path.resolve(__dirname, '../.env'));
   // Dummy pool to prevent crash on require, but fail on usage
   pool = {
     query: async () => { throw new Error("Database not configured (missing DATABASE_URL)"); },
@@ -22,13 +26,11 @@ if (!process.env.DATABASE_URL) {
 } else {
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false // Neon yêu cầu SSL
-    },
+    // ssl: true, // Let the connection string handle SSL (sslmode=require)
     // Connection pool config
     max: 20,                    // Tối đa 20 connections
     idleTimeoutMillis: 30000,   // Close idle connections sau 30s
-    connectionTimeoutMillis: 2000, // Timeout khi tạo connection mới
+    connectionTimeoutMillis: 10000, // Tăng timeout lên 10s cho mạng chậm
   });
 
   // Event listeners để debug
