@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = Object.fromEntries(formData.entries());
             
             // Convert dd/mm/yyyy to yyyy-mm-dd for backend
-            if (data.dob) {
+            // Note: With type="date", format is already yyyy-mm-dd, so this block is safe to keep (won't run)
+            if (data.dob && data.dob.includes('/')) {
                 const dobParts = data.dob.split('/');
                 if (dobParts.length === 3) {
                     data.dob = `${dobParts[2]}-${dobParts[1]}-${dobParts[0]}`;
@@ -26,13 +27,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.error || 'Lỗi đăng ký');
-                    });
+            .then(async response => {
+                // Check if response is JSON
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    // If server returns HTML (e.g. 404/500 error page from Netlify/Nginx)
+                    throw new Error("Lỗi kết nối: Server không phản hồi đúng định dạng. (Có thể do thiếu Backend)");
                 }
-                return response.json();
+
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'Lỗi đăng ký từ server');
+                }
+                
+                return result;
             })
             .then(result => {
                 console.log('Registration result:', result);
