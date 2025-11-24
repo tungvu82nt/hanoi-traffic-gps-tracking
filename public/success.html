@@ -1,71 +1,170 @@
 <!DOCTYPE html>
-
-<html lang="vi"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Xác nhận đăng ký</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-<script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "primary": "#28a745",
-              "background-light": "#f8f9fa",
-              "background-dark": "#101922",
-              "text-light": "#333333",
-              "text-dark": "#f8f9fa",
-            },
-            fontFamily: {
-              "display": ["Public Sans", "sans-serif"]
-            },
-            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
-          },
-        },
-      }
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký Thành Công! 🎉</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'success': '#10b981',
+                        'success-light': '#d1fae5',
+                    },
+                    fontFamily: {
+                        'sans': ['Public Sans', 'sans-serif']
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 2s infinite',
+                        'fade-in': 'fadeIn 0.5s ease-in',
+                        'scale-in': 'scaleIn 0.5s ease-out'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.9)' },
+                            '100%': { transform: 'scale(1)' }
+                        }
+                    }
+                }
+            }
+        }
     </script>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
-  </head>
-<body class="bg-background-light dark:bg-background-dark">
-<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display group/design-root overflow-x-hidden" style='font-family: "Public Sans", sans-serif;'>
-<main class="flex flex-1 flex-col items-center justify-center p-4 text-center">
-<!-- Success Icon -->
-<div class="flex items-center justify-center mb-6">
-<div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/20">
-<div class="flex h-16 w-16 items-center justify-center rounded-full bg-primary">
-<span class="material-symbols-outlined text-white text-5xl">
-                        check
-                    </span>
-</div>
-</div>
-</div>
-<!-- HeadlineText -->
-<h1 class="text-text-light dark:text-text-dark tracking-light text-[32px] font-bold leading-tight px-4 pb-3 pt-6">Chúc mừng bạn đã đăng ký thành công!</h1>
-<!-- BodyText -->
-<p class="text-text-light dark:text-text-dark text-base font-normal leading-normal pb-3 pt-1 px-4 max-w-md">
-            Chúng tôi đã gửi một email xác nhận đến địa chỉ của bạn. Vui lòng kiểm tra hộp thư và nhấn vào liên kết bên trong để hoàn tất quá trình.
-        </p>
-<!-- Optional Illustration -->
-<div class="w-full max-w-xs p-4 mt-4">
-<div class="w-full bg-center bg-no-repeat bg-cover aspect-video rounded-none" data-alt="Illustration of Hanoi with traffic light signals" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA_sMqN9ojNYn6xsnDl-gBMHEUo2nZrE_Si7qIWpcs5TNJkm2rmD7rujFXcpuNvPyO2708EeesaltPL0b52YPFGcxvLcEDvbB9pZCAfAd1Mk67rHc6euK9s8zO6fQTwl_rW-4W7_73q0vyMiLHt-pjI_tCzG9jd9NOOYuTmIGfzU0NOvGq37hG_9WGH_se50G1ALU7-TG8AQdxvopAKeCdLUO4gs0QZtJgUDC8WpTZreUIET7FN0Dl2P6dx-5294StboFrZXJRhthg");'></div>
-</div>
-</main>
-<!-- SingleButton -->
-<footer class="p-4">
-<div class="flex px-4 py-3">
-<a href="/" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 flex-1 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em]">
-<span class="truncate">Về trang chủ</span>
-</a>
-</div>
-</footer>
-</div>
-</body></html>
+    <style>
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        
+        .checkmark {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 3;
+            stroke: #10b981;
+            stroke-miterlimit: 10;
+            margin: 10% auto;
+            box-shadow: inset 0px 0px 0px #10b981;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        }
+        
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+        
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        @keyframes scale {
+            0%, 100% {
+                transform: none;
+            }
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
+        }
+        
+        @keyframes fill {
+            100% {
+                box-shadow: inset 0px 0px 0px 30px #10b981;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-emerald-100 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 animate-scale-in">
+        <!-- Checkmark Animation -->
+        <div class="flex justify-center mb-6">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+
+        <!-- Success Message -->
+        <div class="text-center animate-fade-in">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">
+                🎉 Chúc Mừng! Đăng Ký Thành Công!
+            </h1>
+            
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                Cảm ơn bạn đã đăng ký nhận thông tin an toàn giao thông Hà Nội. 
+                Chúng tôi sẽ gửi email xác nhận đến địa chỉ của bạn trong giây lát.
+            </p>
+
+            <!-- Info Cards -->
+            <div class="bg-success-light border-l-4 border-success p-4 mb-6 rounded-r-lg">
+                <div class="flex items-start">
+                    <svg class="w-6 h-6 text-success mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div class="text-left">
+                        <p class="text-sm font-semibold text-gray-700 mb-1">Vui lòng kiểm tra email</p>
+                        <p class="text-sm text-gray-600">
+                            Nhấn vào liên kết xác nhận trong email để hoàn tất đăng ký
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits -->
+            <div class="text-left mb-8 space-y-3">
+                <h3 class="text-lg font-semibold text-gray-700 mb-3">Bạn sẽ nhận được:</h3>
+                <ul class="space-y-2">
+                    <li class="flex items-center text-gray-600">
+                        <svg class="w-5 h-5 text-success mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        Thông báo giao thông realtime
+                    </li>
+                    <li class="flex items-center text-gray-600">
+                        <svg class="w-5 h-5 text-success mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        Cập nhật biển báo mới
+                    </li>
+                    <li class="flex items-center text-gray-600">
+                        <svg class="w-5 h-5 text-success mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        Quy định an toàn giao thông
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3">
+                <a href="/" class="block w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    🏠 Về Trang Chủ
+                </a>
+                
+                <a href="mailto:support@example.com" class="block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg transition duration-300">
+                    📧 Liên Hệ Hỗ Trợ
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-6 text-sm text-gray-500">
+            <p>Hệ thống An Toàn Giao Thông Hà Nội</p>
+            <p class="mt-1">📍 Hà Nội, Việt Nam | 📞 1900-xxxx</p>
+        </div>
+    </div>
+</body>
+</html>

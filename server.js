@@ -183,7 +183,8 @@ app.post('/register', registerLimiter, async (req, res) => {
     );
 
     console.log('✅ Đăng ký thành công, ID:', result.rows[0].id);
-    return res.redirect('/success.html');
+    // Trả về JSON response với ID đăng ký thay vì redirect
+    return res.json({ success: true, id: result.rows[0].id, message: 'Đăng ký thành công' });
   } catch (err) {
     console.error('❌ Lỗi đăng ký:', err);
     return res.status(500).json({ error: 'Lỗi server.' });
