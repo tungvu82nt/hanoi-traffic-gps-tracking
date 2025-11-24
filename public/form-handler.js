@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Registration result:', result);
                 
                 if (result.success && result.id) {
-                    // Redirect to success page
+                    // Redirect to success page immediately since tracking card is removed
                     window.location.href = '/success.html';
                 } else if (result.error) {
                     // Show error message
