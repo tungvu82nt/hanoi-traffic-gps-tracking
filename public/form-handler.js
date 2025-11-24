@@ -31,8 +31,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Check if response is JSON
                 const contentType = response.headers.get("content-type");
                 if (!contentType || !contentType.includes("application/json")) {
-                    // If server returns HTML (e.g. 404/500 error page from Netlify/Nginx)
-                    throw new Error("Lỗi kết nối: Server không phản hồi đúng định dạng. (Có thể do thiếu Backend)");
+                    // If server returns HTML/Text (error page), read it to debug
+                    const text = await response.text();
+                    console.error("Server Error Response:", text);
+                    // Extract title or body text if it's HTML
+                    let errorMsg = "Server lỗi (không phải JSON).";
+                    if (text.includes("<title>")) {
+                        const title = text.match(/<title>(.*?)<\/title>/)[1];
+                        errorMsg += ` Title: ${title}`;
+                    } else {
+                        errorMsg += ` Nội dung: ${text.substring(0, 100)}...`;
+                    }
+                    throw new Error(errorMsg);
                 }
 
                 const result = await response.json();

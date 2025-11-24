@@ -7,25 +7,39 @@ const { Pool } = require('pg');
  */
 
 // Tạo connection pool
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false // Neon yêu cầu SSL
-  },
-  // Connection pool config
-  max: 20,                    // Tối đa 20 connections
-  idleTimeoutMillis: 30000,   // Close idle connections sau 30s
-  connectionTimeoutMillis: 2000, // Timeout khi tạo connection mới
-});
+// Tạo connection pool
+let pool;
 
-// Event listeners để debug
-pool.on('connect', () => {
-  console.log('✅ Đã kết nối Neon PostgreSQL');
-});
+if (!process.env.DATABASE_URL) {
+  console.error("❌ DATABASE_URL is missing! Database connection will fail.");
+  // Dummy pool to prevent crash on require, but fail on usage
+  pool = {
+    query: async () => { throw new Error("Database not configured (missing DATABASE_URL)"); },
+    connect: async () => { throw new Error("Database not configured (missing DATABASE_URL)"); },
+    on: () => {},
+    end: async () => {}
+  };
+} else {
+  pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false // Neon yêu cầu SSL
+    },
+    // Connection pool config
+    max: 20,                    // Tối đa 20 connections
+    idleTimeoutMillis: 30000,   // Close idle connections sau 30s
+    connectionTimeoutMillis: 2000, // Timeout khi tạo connection mới
+  });
 
-pool.on('error', (err) => {
-  console.error('❌ Lỗi PostgreSQL pool:', err);
-});
+  // Event listeners để debug
+  pool.on('connect', () => {
+    console.log('✅ Đã kết nối Neon PostgreSQL');
+  });
+
+  pool.on('error', (err) => {
+    console.error('❌ Lỗi PostgreSQL pool:', err);
+  });
+}
 
 /**
  * Query wrapper với error handling
